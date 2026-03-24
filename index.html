@@ -9,12 +9,12 @@
 <meta name="apple-mobile-web-app-title" content="Portes du Manoir">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0f1117">
-  <link rel="manifest" href="/Le-manoir/manifest.json">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
 :root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:rgba(255,255,255,0.08);--accent:#f5a623;--accent2:#4a9eff;--text:#eeeef0;--muted:#7a7f9a;--success:#4ade80;--danger:#f87171;--radius:14px;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 0 60px;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);padding:0 0 30px;}
+html{background:var(--bg);}
 
 /* HEADER */
 header{background:linear-gradient(135deg,#1a1d27 0%,#0f1117 100%);border-bottom:1px solid var(--border);padding:16px 16px 14px;position:sticky;top:0;z-index:10;}
@@ -65,8 +65,9 @@ h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;}
 .field label{font-size:12px;color:var(--muted);font-weight:500;}
 
 /* INPUTS */
-select,input[type=number],input[type=text]{background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;padding:11px 14px;width:100%;appearance:none;-webkit-appearance:none;}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7f9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+select,input[type=number],input[type=text]{background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;padding:11px 14px;width:100%;appearance:none;-webkit-appearance:none;-moz-appearance:none;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23f5a623' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+select option{background:#1a1d27;color:#eeeef0;}
 input.error{border-color:var(--danger);}
 .input-hint{font-size:11px;color:var(--muted);margin-top:3px;}
 .input-hint.err{color:var(--danger);}
@@ -142,6 +143,21 @@ input.error{border-color:var(--danger);}
 .offline-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--success);margin-top:10px;}
 .dot{width:6px;height:6px;background:var(--success);border-radius:50%;}
 
+/* CUSTOM SELECT */
+.custom-select{position:relative;width:100%;z-index:10;}
+.custom-select.open{z-index:50;}
+.cs-btn{display:flex;justify-content:space-between;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;transition:border-color 0.15s;}
+.custom-select.open .cs-btn{border-color:var(--accent);border-radius:10px 10px 0 0;}
+.cs-val{font-size:15px;color:var(--text);}
+.cs-arrow{font-size:11px;color:var(--accent);transition:transform 0.2s;}
+.custom-select.open .cs-arrow{transform:rotate(180deg);}
+.cs-list{display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface2);border:1px solid var(--accent);border-top:none;border-radius:0 0 10px 10px;overflow:hidden;max-height:280px;overflow-y:auto;}
+.custom-select.open .cs-list{display:block;}
+.cs-opt{padding:12px 14px;font-size:14px;color:var(--muted);cursor:pointer;border-top:1px solid var(--border);transition:background 0.1s;}
+.cs-opt:first-child{border-top:none;}
+.cs-opt:active,.cs-opt.sel{background:rgba(245,166,35,0.12);color:var(--accent);}
+.cs-opt.sel::after{content:" ✓";color:var(--accent);float:right;}
+
 /* PANNEAU COULISSANT mm→po */
 .conv-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;opacity:0;pointer-events:none;transition:opacity 0.25s;}
 .conv-overlay.open{opacity:1;pointer-events:all;}
@@ -185,14 +201,20 @@ input.error{border-color:var(--danger);}
 
       <div class="field">
         <label>Structure du mur</label>
-        <select id="struct" onchange="onStructChange()">
-          <option value="3.5">2×4 bois (3½")</option>
-          <option value="5.5">2×6 bois (5½")</option>
-          <option value="3.625">Acier léger 3⅝"</option>
-          <option value="6">Acier léger 6"</option>
-          <option value="8">Bloc béton 8"</option>
-          <option value="other">Autre — saisie libre</option>
-        </select>
+        <div class="custom-select" id="dd-struct">
+          <div class="cs-btn" onclick="toggleDD('dd-struct')">
+            <span class="cs-val">2×4 bois (3½")</span>
+            <span class="cs-arrow">▼</span>
+          </div>
+          <div class="cs-list">
+            <div class="cs-opt sel" data-val="3.5" onclick="pickDD('dd-struct',this)">2×4 bois (3½")</div>
+            <div class="cs-opt" data-val="5.5" onclick="pickDD('dd-struct',this)">2×6 bois (5½")</div>
+            <div class="cs-opt" data-val="3.625" onclick="pickDD('dd-struct',this)">Acier léger 3⅝"</div>
+            <div class="cs-opt" data-val="6" onclick="pickDD('dd-struct',this)">Acier léger 6"</div>
+            <div class="cs-opt" data-val="8" onclick="pickDD('dd-struct',this)">Bloc béton 8"</div>
+            <div class="cs-opt" data-val="other" onclick="pickDD('dd-struct',this)">Autre — saisie libre</div>
+          </div>
+        </div>
       </div>
 
       <!-- SAISIE LIBRE STRUCTURE -->
@@ -206,30 +228,42 @@ input.error{border-color:var(--danger);}
 
       <div class="field">
         <label>Gypse côté 1</label>
-        <select id="g1">
-          <option value="0.5">½" — régulier (12.7mm)</option>
-          <option value="0.625">⅝" — type X coupe-feu (15.9mm)</option>
-          <option value="0.375">⅜" — deuxième couche / plafond (9.5mm)</option>
-          <option value="0.25">¼" — flexible / réparation (6.4mm)</option>
-          <option value="1">1" — double couche ½"+½"</option>
-          <option value="1.125">1⅛" — double couche ½"+⅝"</option>
-          <option value="1.25">1¼" — double couche ⅝"+⅝"</option>
-          <option value="0">Aucun</option>
-        </select>
+        <div class="custom-select" id="dd-g1">
+          <div class="cs-btn" onclick="toggleDD('dd-g1')">
+            <span class="cs-val">½" — régulier (12.7mm)</span>
+            <span class="cs-arrow">▼</span>
+          </div>
+          <div class="cs-list">
+            <div class="cs-opt sel" data-val="0.5" onclick="pickDD('dd-g1',this)">½" — régulier (12.7mm)</div>
+            <div class="cs-opt" data-val="0.625" onclick="pickDD('dd-g1',this)">⅝" — type X coupe-feu (15.9mm)</div>
+            <div class="cs-opt" data-val="0.375" onclick="pickDD('dd-g1',this)">⅜" — deuxième couche (9.5mm)</div>
+            <div class="cs-opt" data-val="0.25" onclick="pickDD('dd-g1',this)">¼" — flexible / réparation (6.4mm)</div>
+            <div class="cs-opt" data-val="1" onclick="pickDD('dd-g1',this)">1" — double couche ½"+½"</div>
+            <div class="cs-opt" data-val="1.125" onclick="pickDD('dd-g1',this)">1⅛" — double couche ½"+⅝"</div>
+            <div class="cs-opt" data-val="1.25" onclick="pickDD('dd-g1',this)">1¼" — double couche ⅝"+⅝"</div>
+            <div class="cs-opt" data-val="0" onclick="pickDD('dd-g1',this)">Aucun</div>
+          </div>
+        </div>
       </div>
 
       <div class="field">
         <label>Gypse côté 2</label>
-        <select id="g2">
-          <option value="0.5">½" — régulier (12.7mm)</option>
-          <option value="0.625">⅝" — type X coupe-feu (15.9mm)</option>
-          <option value="0.375">⅜" — deuxième couche / plafond (9.5mm)</option>
-          <option value="0.25">¼" — flexible / réparation (6.4mm)</option>
-          <option value="1">1" — double couche ½"+½"</option>
-          <option value="1.125">1⅛" — double couche ½"+⅝"</option>
-          <option value="1.25">1¼" — double couche ⅝"+⅝"</option>
-          <option value="0">Aucun</option>
-        </select>
+        <div class="custom-select" id="dd-g2">
+          <div class="cs-btn" onclick="toggleDD('dd-g2')">
+            <span class="cs-val">½" — régulier (12.7mm)</span>
+            <span class="cs-arrow">▼</span>
+          </div>
+          <div class="cs-list">
+            <div class="cs-opt sel" data-val="0.5" onclick="pickDD('dd-g2',this)">½" — régulier (12.7mm)</div>
+            <div class="cs-opt" data-val="0.625" onclick="pickDD('dd-g2',this)">⅝" — type X coupe-feu (15.9mm)</div>
+            <div class="cs-opt" data-val="0.375" onclick="pickDD('dd-g2',this)">⅜" — deuxième couche (9.5mm)</div>
+            <div class="cs-opt" data-val="0.25" onclick="pickDD('dd-g2',this)">¼" — flexible / réparation (6.4mm)</div>
+            <div class="cs-opt" data-val="1" onclick="pickDD('dd-g2',this)">1" — double couche ½"+½"</div>
+            <div class="cs-opt" data-val="1.125" onclick="pickDD('dd-g2',this)">1⅛" — double couche ½"+⅝"</div>
+            <div class="cs-opt" data-val="1.25" onclick="pickDD('dd-g2',this)">1¼" — double couche ⅝"+⅝"</div>
+            <div class="cs-opt" data-val="0" onclick="pickDD('dd-g2',this)">Aucun</div>
+          </div>
+        </div>
       </div>
 
       <button class="calc-btn" onclick="calculate()">Calculer l'épaisseur du cadre</button>
@@ -270,9 +304,9 @@ input.error{border-color:var(--danger);}
       </div>
     </div>
 
-    <div style="display:flex;gap:8px;margin-top:8px;">
-      <button class="add-fen-btn" style="flex:1" onclick="addFen()">+ Ajouter une fenêtre</button>
-      <button class="add-fen-btn" style="flex:0 0 auto;padding:11px 14px;color:var(--danger);border-color:rgba(248,113,113,0.3)" onclick="resetFen()">↺ Réinitialiser</button>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+      <button class="add-fen-btn" onclick="addFen()">+ Ajouter une fenêtre</button>
+      <button class="add-fen-btn" style="color:var(--danger);border-color:rgba(248,113,113,0.3)" onclick="resetFen()">↺ Réinitialiser tout</button>
     </div>
   </div>
 
@@ -453,6 +487,34 @@ input.error{border-color:var(--danger);}
 </div>
 
 <script>
+// ── CUSTOM DROPDOWNS ─────────────────────────────────────
+function toggleDD(id) {
+  const dd = document.getElementById(id);
+  const wasOpen = dd.classList.contains('open');
+  // Fermer tous les autres
+  document.querySelectorAll('.custom-select.open').forEach(d => d.classList.remove('open'));
+  if (!wasOpen) dd.classList.add('open');
+}
+function pickDD(id, el) {
+  const dd = document.getElementById(id);
+  dd.querySelector('.cs-val').textContent = el.textContent.replace(' ✓','');
+  dd.querySelectorAll('.cs-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  dd.classList.remove('open');
+  if (id === 'dd-struct') onStructChange();
+  clearCalcResult();
+}
+function getDDVal(id) {
+  const sel = document.querySelector('#'+id+' .cs-opt.sel');
+  return sel ? sel.getAttribute('data-val') : null;
+}
+// Fermer les dropdowns si on clique ailleurs
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.custom-select')) {
+    document.querySelectorAll('.custom-select.open').forEach(d => d.classList.remove('open'));
+  }
+});
+
 // ── BLOCAGE CARACTÈRES INVALIDES ─────────────────────────
 function blockInvalidChar(e) {
   const allowed = '0123456789 ./';
@@ -561,41 +623,34 @@ function toggleInstall() {
 
 // ── ONGLET CADRES ────────────────────────────────────────
 function onStructChange() {
-  const v = document.getElementById('struct').value;
+  const v = getDDVal('dd-struct');
   document.getElementById('custom-field').style.display = v === 'other' ? 'flex' : 'none';
   clearCalcResult();
 }
 function clearCalcResult() {
   document.getElementById('result-card').classList.remove('show');
 }
-function setChip(sel, val, el) {
-  document.getElementById(sel).value = String(val);
-  el.closest('.std-chips').querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
-  clearCalcResult();
-}
 function calculate() {
   let s;
-  const structVal = document.getElementById('struct').value;
+  const structVal = getDDVal('dd-struct');
   if (structVal === 'other') {
     s = parseInch(document.getElementById('custom-val').value);
     if (s === null) {
       document.getElementById('custom-val').classList.add('error');
-      document.getElementById('custom-val').nextElementSibling.nextElementSibling && null;
       const hint = document.getElementById('custom-field').querySelector('.input-hint');
       hint.textContent = '⚠ Format invalide — ex: 4 5/8" ou 4.625"';
       hint.classList.add('err');
       return;
     }
     const hint = document.getElementById('custom-field').querySelector('.input-hint');
-    hint.textContent = 'Formats acceptés : 4" · 4 1/2" · 4.5" · 4½"';
+    hint.textContent = 'Tape le chiffre — le / et le " s\'ajoutent automatiquement';
     hint.classList.remove('err');
     document.getElementById('custom-val').classList.remove('error');
   } else {
     s = parseFloat(structVal);
   }
-  const g1 = parseFloat(document.getElementById('g1').value);
-  const g2 = parseFloat(document.getElementById('g2').value);
+  const g1 = parseFloat(getDDVal('dd-g1'));
+  const g2 = parseFloat(getDDVal('dd-g2'));
   const mur = Math.round((s + g1 + g2) * 1000) / 1000;
   const cadre = Math.round((mur + 0.125) * 1000) / 1000;
   document.getElementById('res-mur').textContent = toFraction(mur) + '"';
@@ -604,22 +659,38 @@ function calculate() {
   document.getElementById('result-card').classList.add('show');
 }
 function useRow(s, g1, g2) {
-  const structSel = document.getElementById('struct');
   const map = {'3.5':'3.5','5.5':'5.5','3.625':'3.625','6':'6','8':'8'};
   const k = String(s);
-  if (map[k]) { structSel.value = k; document.getElementById('custom-field').style.display = 'none'; }
-  else { structSel.value = 'other'; document.getElementById('custom-val').value = toFraction(s); document.getElementById('custom-field').style.display = 'flex'; }
-  document.getElementById('g1').value = String(g1);
-  document.getElementById('g2').value = String(g2);
-  // sync chips
-  ['g1','g2'].forEach(id => {
-    const val = document.getElementById(id).value;
-    document.getElementById(id+'-chips').querySelectorAll('.chip').forEach(c => {
-      c.classList.toggle('sel', c.getAttribute('onclick').includes(val));
-    });
-  });
+  const structLabel = {
+    '3.5':'2×4 bois (3½")','5.5':'2×6 bois (5½")',
+    '3.625':'Acier léger 3⅝"','6':'Acier léger 6"','8':'Bloc béton 8"'
+  };
+  const gLabel = {
+    '0.5':'½" — régulier (12.7mm)','0.625':'⅝" — type X coupe-feu (15.9mm)',
+    '0.375':'⅜" — deuxième couche (9.5mm)','0.25':'¼" — flexible / réparation (6.4mm)',
+    '1':'1" — double couche ½"+½"','1.125':'1⅛" — double couche ½"+⅝"',
+    '1.25':'1¼" — double couche ⅝"+⅝"','0':'Aucun'
+  };
+  // Mettre à jour struct
+  if (map[k]) {
+    setDDVal('dd-struct', k, structLabel[k]);
+    document.getElementById('custom-field').style.display = 'none';
+  } else {
+    setDDVal('dd-struct', 'other', 'Autre — saisie libre');
+    document.getElementById('custom-val').value = toFraction(s) + '"';
+    document.getElementById('custom-field').style.display = 'flex';
+  }
+  setDDVal('dd-g1', String(g1), gLabel[String(g1)] || String(g1));
+  setDDVal('dd-g2', String(g2), gLabel[String(g2)] || String(g2));
   showTab('calc');
   calculate();
+}
+function setDDVal(id, val, label) {
+  const dd = document.getElementById(id);
+  dd.querySelector('.cs-val').textContent = label;
+  dd.querySelectorAll('.cs-opt').forEach(o => {
+    o.classList.toggle('sel', o.getAttribute('data-val') === val);
+  });
 }
 
 // ── ONGLET FENÊTRES ──────────────────────────────────────
