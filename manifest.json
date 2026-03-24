@@ -1,0 +1,15 @@
+{
+  "name": "Portes du Manoir",
+  "short_name": "Manoir",
+  "start_url": "/Le-manoir/",
+  "display": "standalone",
+  "background_color": "#0f1117",
+  "theme_color": "#f5a623",
+  "icons": [
+    {
+      "src": "https://roni4life.github.io/Le-manoir/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
