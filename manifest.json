@@ -7,9 +7,10 @@
   "theme_color": "#f5a623",
   "icons": [
     {
-      "src": "https://roni4life.github.io/Le-manoir/icon.png",
+      "src": "icon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
