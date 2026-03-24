@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Portes du Manoir</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Portes du Manoir">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f1117">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:rgba(255,255,255,0.08);--accent:#f5a623;--accent2:#4a9eff;--text:#eeeef0;--muted:#7a7f9a;--success:#4ade80;--danger:#f87171;--radius:14px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 0 60px;}
+
+/* HEADER */
+header{background:linear-gradient(135deg,#1a1d27 0%,#0f1117 100%);border-bottom:1px solid var(--border);padding:16px 16px 14px;position:sticky;top:0;z-index:10;}
+.header-row{display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;}
+.tagline{font-size:11px;color:var(--muted);margin-left:42px;margin-top:2px;}
+
+/* BOUTON mm→po DANS LE HEADER */
+.conv-btn{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid rgba(245,166,35,0.4);border-radius:10px;padding:8px 12px;cursor:pointer;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;white-space:nowrap;transition:background 0.15s;}
+.conv-btn:active{background:var(--surface);}
+.conv-btn-icon{font-size:16px;}
+
+/* INSTALL BANNER */
+.install-banner{margin:12px 16px 0;background:var(--surface2);border:1px solid rgba(245,166,35,0.35);border-radius:12px;overflow:hidden;}
+.install-top{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;}
+.install-top-text{flex:1;}
+.install-top-text strong{font-size:13px;font-weight:600;color:var(--accent);display:block;}
+.install-top-text span{font-size:11px;color:var(--muted);}
+.install-chevron{color:var(--muted);font-size:14px;transition:transform 0.2s;}
+.install-chevron.open{transform:rotate(180deg);}
+.install-steps{display:none;padding:0 14px 14px;}
+.install-steps.open{display:block;}
+.install-stitle{font-size:12px;color:var(--muted);padding:10px 0 6px;font-weight:500;border-top:1px solid var(--border);margin-top:4px;}
+.install-stitle:first-child{border-top:none;padding-top:0;}
+.install-step{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-top:1px solid var(--border);}
+.step-num{width:22px;height:22px;background:var(--accent);color:#1a0f00;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.step-txt{font-size:12px;color:var(--text);line-height:1.5;}
+.step-txt em{color:var(--accent);font-style:normal;font-weight:500;}
+
+/* FORMULA BAR */
+.formula-bar{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:10px 14px;margin:12px 16px 0;font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);line-height:1.6;}
+.formula-bar span{color:var(--muted);font-family:'DM Sans',sans-serif;font-size:11px;display:block;margin-top:2px;}
+
+/* TABS */
+.tabs{display:flex;margin:12px 16px 0;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:3px;gap:2px;}
+.tab{flex:1;padding:8px 2px;border:none;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;border-radius:8px;cursor:pointer;transition:all 0.2s;}
+.tab.active{background:rgba(245,166,35,0.12);color:var(--accent);}
+.panel{display:none;padding:14px 16px;}
+.panel.active{display:block;}
+
+/* CARDS */
+.calc-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+.calc-card h3{font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;}
+.field-row{display:flex;flex-direction:column;gap:10px;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:12px;color:var(--muted);font-weight:500;}
+
+/* INPUTS */
+select,input[type=number],input[type=text]{background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;padding:11px 14px;width:100%;appearance:none;-webkit-appearance:none;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7f9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+input.error{border-color:var(--danger);}
+.input-hint{font-size:11px;color:var(--muted);margin-top:3px;}
+.input-hint.err{color:var(--danger);}
+
+/* SAISIE LIBRE CADRE */
+.free-input-wrap{position:relative;}
+.free-input-wrap input{font-family:'DM Mono',monospace;font-size:18px;padding:13px 14px;letter-spacing:0.5px;}
+.std-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.chip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:12px;font-family:'DM Mono',monospace;color:var(--muted);cursor:pointer;transition:all 0.15s;}
+.chip:active,.chip.sel{background:rgba(245,166,35,0.15);border-color:var(--accent);color:var(--accent);}
+
+/* BOUTON CALC */
+.calc-btn{width:100%;padding:13px;background:var(--accent);color:#1a0f00;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:2px;transition:opacity 0.15s;}
+.calc-btn:active{opacity:0.85;}
+.calc-btn.blue{background:var(--accent2);color:#fff;}
+
+/* RÉSULTATS */
+.result-card{background:linear-gradient(135deg,#1a2a1a,#0f1117);border:1px solid rgba(74,222,128,0.25);border-radius:var(--radius);padding:18px 16px;display:none;animation:slideUp 0.3s ease;}
+.result-card.show{display:block;}
+.result-card.blue-result{background:linear-gradient(135deg,#0f1e2a,#0f1117);border-color:rgba(74,158,255,0.25);}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.result-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);}
+.result-row:last-child{border-bottom:none;}
+.result-name{font-size:13px;color:var(--muted);}
+.result-val{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;}
+.result-big{font-size:26px;font-weight:600;color:var(--success);}
+.result-detail{font-size:11px;color:var(--muted);margin-top:8px;font-family:'DM Mono',monospace;line-height:1.6;}
+
+/* TABLE RÉFÉRENCE */
+.section-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;padding:0 2px;}
+.table-group{margin-bottom:18px;}
+.door-row{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:border-color 0.15s;}
+.door-row:active{border-color:var(--accent2);}
+.door-info{flex:1;}
+.door-name{font-size:13px;font-weight:500;margin-bottom:2px;}
+.door-comp{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+.door-note{font-size:11px;color:var(--muted);margin-top:2px;}
+.door-cadre{text-align:right;min-width:68px;}
+.cadre-label{font-size:10px;color:var(--muted);margin-bottom:2px;}
+.cadre-val{font-family:'DM Mono',monospace;font-size:17px;font-weight:600;color:var(--accent);}
+.badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;margin-right:4px;}
+.b-bois{background:rgba(74,222,128,0.15);color:#4ade80;}
+.b-acier{background:rgba(74,158,255,0.15);color:#4a9eff;}
+.b-beton{background:rgba(148,163,184,0.15);color:#94a3b8;}
+
+/* CADRAGE FENÊTRES */
+.fen-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.fen-row{display:flex;align-items:center;gap:6px;}
+.fen-input-wrap{flex:1;position:relative;display:flex;align-items:center;}
+.fen-input-wrap input{width:100%;font-family:'DM Mono',monospace;text-align:center;padding-right:22px;}
+.fen-unit{position:absolute;right:10px;font-family:'DM Mono',monospace;font-size:14px;font-weight:600;color:var(--accent);pointer-events:none;}
+.fen-sep{color:var(--muted);font-size:18px;font-weight:500;flex-shrink:0;}
+.fen-del{width:32px;height:44px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--danger);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.add-fen-btn{width:100%;padding:11px;background:transparent;border:1px dashed var(--border);border-radius:10px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;transition:all 0.15s;}
+.add-fen-btn:active{background:var(--surface2);}
+
+/* RÉSULTAT CADRAGE */
+.cadrage-result{background:linear-gradient(135deg,#0f1e2a,#0f1117);border:1px solid rgba(74,158,255,0.25);border-radius:var(--radius);padding:18px 16px;display:none;animation:slideUp 0.3s ease;}
+.cadrage-result.show{display:block;}
+.cadrage-big{font-size:48px;font-weight:600;color:var(--accent2);text-align:center;padding:12px 0 4px;}
+.cadrage-sub{text-align:center;font-size:13px;color:var(--muted);margin-bottom:14px;}
+.cadrage-detail{background:var(--surface2);border-radius:10px;padding:12px;font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);line-height:1.8;}
+.cadrage-detail .hi{color:var(--text);}
+
+/* NOTES */
+.note-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;}
+.note-card h3{font-size:13px;font-weight:600;margin-bottom:8px;color:var(--accent);}
+.note-card p{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:7px;}
+.note-card p:last-child{margin-bottom:0;}
+.note-card strong{color:var(--text);font-weight:500;}
+.tip{background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:10px;padding:11px 13px;font-size:13px;color:var(--text);line-height:1.6;margin-bottom:10px;}
+.tip::before{content:"💡 ";}
+.offline-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--success);margin-top:10px;}
+.dot{width:6px;height:6px;background:var(--success);border-radius:50%;}
+
+/* PANNEAU COULISSANT mm→po */
+.conv-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+.conv-overlay.open{opacity:1;pointer-events:all;}
+.conv-sheet{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:0 16px 44px;z-index:201;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);max-height:88vh;overflow-y:auto;}
+.conv-sheet.open{transform:translateY(0);}
+.sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 16px;}
+.sheet-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
+.sheet-close{background:var(--surface2);border:none;color:var(--muted);width:28px;height:28px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.conv-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px;}
+.conv-quick{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 11px;}
+.conv-quick-mm{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:3px;}
+.conv-quick-val{font-size:13px;font-weight:600;color:var(--accent);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+        <div class="logo">
+      <img src="data:image/png;base64,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ThIbNmxAOp2WJ9G2bQ47ESvDar+RuQa7RZr6nSiVSshms6jVatLlcOihh2Lr1q2kps6z7jrXMAwDfFBt20YQBOjt7RVMMJZlyRhsIpEAlyCyf46/OFzHbh9gbvS8eSc4jgmy323FihVi+/btMsifz+cxNjaGZDKJZssrGIYhrcm5hm3b0nVimiYWL14s2GnNkRI1n46fx66WuYaaXq421slms0KVBKxL27YN3/flvFeuQYmG6+bKTzfvBAdAxlWZay1fvlxs2rRJ5qstWrRILUAhFled4CAchwTGDYxMJiPYPcEhokQiITmx67pSlM01OK+vmeAqw4OpVAq9vb3CdV1YloVCoSDX03Rck23bKBaLk/rp5gILguA4IK62Vz3ttNPE5s2bpe+IRVvzphMH0ucaXJASbYOayWQE63K6rsNxHGSzWWQyGZmR24n1+b7fMkciDEOk02nmZMjlcoIPLju22eFerVaJkzVzuRz77gDMXc3uvBMcV86z8xIYL4877rjjRH9/v8xg5cAzZ7x2su61VCq1zFRtEpjwPE9aevx4KpXihjVzvj5N06QOl06nJbdTdclcLifq9Tqy2axMw8rlckgmk9JPx9nZwNx2l5oxwTV8QUAY+hCCIAQhDH0YxtTemjlINN2cie/4448XW7dulb69dDotfWXFYpFU3xKnss+mHyyaT6f67QBI8co+MO44oOs61B4hapH2bHa5VMW2qmKohTTpdBpLliwRTUsV+XxelkSapinz/liH4wgLMDHAr77vvgT/553D7Q2ZTAbHHnusWL9+PQzDQLlcRiaTkY7NXbt2UTqdlua8egM6VZvA1WB8k7i2IJ1OY2BggFKpVEuRNt+sTul4lmVxo2rBGTms23FZJBER590lk0mUSiXpQeB4bbValbo2Z6dMF7OeLTLbYqRer6NQKODkk08W69atQ6FQQLlclomFXV1dGBsbI7W6n8NUnSoEDoIAPT09olqtolgsolAoyEr7fD6P7du3kzoEhIjg+35H8unYjcSd0bkaLJ/PyzJJIuI4LbHDl/PoTNPkUKO8x5wksC++0FnIFpnbxirM1YBGEucbb7wh60rVCx4aGiKulud4YyciEeylbxKXSCQSUt9kkdPb24u+vj5Sk0o5EbUTUKvxm5nNoq+vD8ViUSYHcJkAx4hVH10Yhshms9Ivygmd+6ISzAnB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Bum6juuvv54402VfEgMk1A/mC3jppZfooYceok9+8pNkWRYBwHe/+1164403iDdH0zTUajV5Y4mIzjjjDHrggQfolVdeabko13VJHY24Zs0a+t3vfkcXXXQR3XTTTTIP7ne/+x319/fT0qVLW/Saduk2fAr54kulEj300EN02223UX9/PwGNE6omDwLA4OAgXXfddfIwnXTSSQQAd911FxERnX/++fL5F110EfEhu+666+jss88mAPjOd75DxWKRjjrqKNTrdfra175GAHD//ffTL37xC8pms5JjfvrTn6avfvWrtHz5cmiahs9+9rMUhiHdeOONMpO23Q3kDBoW3YsWLQIAvPDCC/TVr361JRH1xRdfpO985zvyd1UEb9iwgW6//XYyDAPf+MY3aHR0lM4991z65je/SYcddhgA4Fe/+hW9+OKL1KytoDPPPJO6urpw7733Uq1Wa9mTPWGvjt9EIiGrmoQQ4Op2ADj33HPxmc98Bueccw6EEFixYgUcx4HjOLLkLZPJyI2oVCr44Q9/iD/5kz/BypUrRSqVkkUjtVoNhxxyCGq1GlKpFMIwxAc/+EGsWrUKK1eulKf6nHPOEVdccQX6+/vpnnvukTfE930sWrQId955J73xxht0zTXXkG3bsuqcaxQAYNeuXUgkEi1pNKZpSgLmOlEAKJfLcBxHpFIprFq1Shx99NHirrvuwksvvUT8XNu28fnPfx4f/ehHkUwm0dPTg3q9Dk3T8Pbbb9NvfvMb3HTTTQJoSIuuri7UajXYtg3DMHDBBRfgwgsvxHHHHUeZTAZ333230DRNnH322QjDkLgKKpVKwTRNfPnLX6aNGzfSbbfdxocCnudhdHQU73jHO/CBD3wADzzwgOju7sYVV1whReeOHTsANESvbduyoU6tVkN/f78sOE8mk1i1ahUuuOACHH744ZRMJmFZFpYsWYJqtUo33XQT1qxZI0qlElatWiWy2ay44447sGnTJkl0qg4/LaiWiXrKtm3bRh/72Mdk2rJhGDjhhBNobGxMPrZ69WoKgoCEECgUCmDx0dfX1yLvmxVTpFo569evpyuuuKIli/SCCy6gF154gQDgmGOOATdoUS+MT7v6GHPNXbt20UknncRV7PS3f/u3BAC+79NnPvMZAoB3vvOdsG2buBKeiIiNoY0bN8o1M1e8+OKLaWBggNTPAYA77riDHn74YWoW+Uhufs8999Dzzz9PAPCXf/mXNDQ0NIGLPfvss8QGUKVSkSoK0GoZtjPKHnroIfI8j1544QUKw5CYCFj3ZQn15JNPSv1wy5YtdOuttxIA3HnnnVLHVD9vzZo1dPXVVxMAjI2Nyeu5+eabiQ0qy7Koq6tr5rNyo5YJALz22mt0/fXXtxRPAMBNN90ku+u4rkunnnoqAcC73/1usG502GGHwXEcUv1clUqFuE4TaGy667pUq9XIsiw655xzCADefPNNchyHbNuma6+9dlpxir6+PrIsiyzLkjfCMAyceeaZVKvVaHBwkFzXpc997nPyfX3fpyOPPBLpdBr/8z//Q9yJ6M477yRd13HJJZcQEVG5XCYiotWrV5OmafjRj34kCesnP/kJ/epXvyIA+NGPfkSPP/44AcBll11G9XqdKpUKWZZF9957L+m6jltuuYVs26Zardb25kd9derPtVqNjj76aPl7EAQyZf2Xv/wlVatVsiyLBgcHiSu5XnrpJbr55ptJCIHvfe97FIYhDQ4Okud5dPPNNxMAPPXUU3TnnXcS0BDBjz76qNT5uIvSf/7nf5K6nn1u2SWEaLFWoxfJFK5yqPe9730TNipqzkdPAluYPP9dJXTVOFi6dOmULyaRSMj1Rf1gaoZtMpmUa+YZ7+rzWUTwXrSrDWDnaDtXSE9PT8u4cdV1ELXm+Dknn3yyNIraNTOMtiXL5/NyX9qNMWfDJNrSLOo/ZfD1q7qy6opSncNqyv0+i9N2F2gYhrz50VI9leD49LBoYvBr1JvN7xfN01eNFL7pwMxGiKuEFI1m8IYC43UFUQ87G0S8Pn59u7RzXnvUe6/+HHXntKtXiHb8jPrD9pTyzu+v7tlkxTesJ6pMZTJuxfc1aphNt3hpAlQPvnpRTFyq1xqAPDFAK0dTb5y68Xx61A1ZtGhRywWqRSV80qM65WRgjqMaBer6gYbLhj9P5SRqQ8LoGqOOTwZzP94zleNE/WVqTUOUg0W5B9B6M9WDy+/PxBoldP5ZfS9+byHEhIhEO+6kVp1FHezM3aIHarp1Hy1gH1EymWwRL+oio/E1YJzokslkS4xShXq6o7FQ9eJTqdQEg2BvaEeU0VMZ/axo7DJaudTuAKo3LBrWikY/1PeOQr3+KDGrUYmoiqOuXyVkoJWY+d6166Sp9hOO9hxW319dW7t4ars4+JTRTh7v7Y1YB2K0O5mqLqDqG9FgcbtyPV7DVNm3qnOpn5FOp+UhiDpUVW6oXq8ados+N3rq1ddHbwYTQTqdnnDzVbGt/p0R5Ybq79ymgsF7pl6fqpMDrZw72sSamUG7ZAA+/HyoJrvmaSG62fwh+Xy+JYTU7uZns9kJXG+ycEcikZAbG43FqYSmxlunimjxNDAxCM5riHIvNS7KaBcvjLZy4O/8s5rhopYeqoge1OgBM02z5Rqiumz0/dS/M2GoqkgqlWqJH6t7woc9uk/tDMDoYVV1v32CyoLbcTc1bUits2SoAe5276kuVOVwUXHRTvmeCtop6+pBUE8ji6PJPPtRLhbNwIheJ0PNNGknMSZLSWqXcRMVmerntwt/tRPf7cRlu0wYfm40/ahdStOePBkxYsSIESNGjBgxYsSIESNGjBgxYsSIESNGjBgxYsSIESNGjBgxYsSIESNGjBgxYsSIESNGjBgxYhw0+H/Ig6aKUTEY4gAAAABJRU5ErkJggg==" style="height:36px;width:auto;" alt="Manoir">
+      <h1>Portes du Manoir</h1>
+    </div>
+  </div>
+  <div class="tagline" style="margin-left:0;margin-top:4px;">Calculateur d'épaisseurs — usage terrain</div>
+</header>
+
+
+<div class="tabs">
+  <button class="tab active" data-tab="calc" onclick="showTab('calc')">Boîtes</button>
+  <button class="tab" data-tab="fen" onclick="showTab('fen')">Cadrages</button>
+  <button class="tab" data-tab="table" onclick="showTab('table')">Référence</button>
+  <button class="tab" data-tab="notes" onclick="showTab('notes')">Notes</button>
+  <button class="tab" style="color:var(--accent);font-size:11px;" onclick="toggleConv()">⇄ mm→po</button>
+</div>
+
+<!-- ═══════════════ ONGLET CADRES ═══════════════ -->
+<div class="panel active" id="tab-calc">
+  <div class="calc-card">
+    <h3>Composition du mur</h3>
+    <div class="field-row">
+
+      <div class="field">
+        <label>Structure du mur</label>
+        <select id="struct" onchange="onStructChange()">
+          <option value="3.5">2×4 bois (3½")</option>
+          <option value="5.5">2×6 bois (5½")</option>
+          <option value="3.625">Acier léger 3⅝"</option>
+          <option value="6">Acier léger 6"</option>
+          <option value="8">Bloc béton 8"</option>
+          <option value="other">Autre — saisie libre</option>
+        </select>
+      </div>
+
+      <!-- SAISIE LIBRE STRUCTURE -->
+      <div class="field" id="custom-field" style="display:none">
+        <label>Épaisseur structure</label>
+        <div class="free-input-wrap">
+          <input type="text" id="custom-val" placeholder='ex: 4 5/8"' inputmode="decimal" autocomplete="off" oninput="smartInchInput(this)" onkeydown="smartInchKey(event,this)" onkeypress="return blockInvalidChar(event)">
+        </div>
+        <div class="input-hint" id="custom-hint">Tape le chiffre — le / et le " s'ajoutent automatiquement</div>
+      </div>
+
+      <div class="field">
+        <label>Gypse côté 1</label>
+        <select id="g1">
+          <option value="0.5">½" — régulier (12.7mm)</option>
+          <option value="0.625">⅝" — type X coupe-feu (15.9mm)</option>
+          <option value="0.375">⅜" — deuxième couche / plafond (9.5mm)</option>
+          <option value="0.25">¼" — flexible / réparation (6.4mm)</option>
+          <option value="1">1" — double couche ½"+½"</option>
+          <option value="1.125">1⅛" — double couche ½"+⅝"</option>
+          <option value="1.25">1¼" — double couche ⅝"+⅝"</option>
+          <option value="0">Aucun</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Gypse côté 2</label>
+        <select id="g2">
+          <option value="0.5">½" — régulier (12.7mm)</option>
+          <option value="0.625">⅝" — type X coupe-feu (15.9mm)</option>
+          <option value="0.375">⅜" — deuxième couche / plafond (9.5mm)</option>
+          <option value="0.25">¼" — flexible / réparation (6.4mm)</option>
+          <option value="1">1" — double couche ½"+½"</option>
+          <option value="1.125">1⅛" — double couche ½"+⅝"</option>
+          <option value="1.25">1¼" — double couche ⅝"+⅝"</option>
+          <option value="0">Aucun</option>
+        </select>
+      </div>
+
+      <button class="calc-btn" onclick="calculate()">Calculer l'épaisseur du cadre</button>
+    </div>
+  </div>
+
+  <div class="result-card" id="result-card">
+    <div class="result-row">
+      <span class="result-name">Mur fini total</span>
+      <span class="result-val" id="res-mur">—</span>
+    </div>
+    <div class="result-row">
+      <span class="result-name">Jeu de pose Manoir</span>
+      <span class="result-val" style="color:var(--muted)">+ ⅛"</span>
+    </div>
+    <div class="result-row" style="padding-top:10px">
+      <span class="result-name" style="color:var(--text);font-weight:600;font-size:14px">CADRE À COMMANDER</span>
+      <span class="result-big" id="res-cadre">—</span>
+    </div>
+    <div class="result-detail" id="res-detail"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ ONGLET FENÊTRES ═══════════════ -->
+<div class="panel" id="tab-fen">
+  <div class="calc-card">
+    <h3>Cadrage de fenêtres — barres de 14'</h3>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5;">
+      Entre tes fenêtres en pouces. L'app calcule le nombre de barres de 14' (168") nécessaires en réutilisant les chutes.
+    </div>
+
+    <div class="fen-list" id="fen-list">
+      <div class="fen-row">
+        <div class="fen-input-wrap"><input type="number" placeholder="Larg" min="1" max="999" oninput="calcFen()"><span class="fen-unit">"</span></div>
+        <span class="fen-sep">×</span>
+        <div class="fen-input-wrap"><input type="number" placeholder="Haut" min="1" max="999" oninput="calcFen()"><span class="fen-unit">"</span></div>
+        <button class="fen-del" onclick="delFen(this)">✕</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="add-fen-btn" style="flex:1" onclick="addFen()">+ Ajouter une fenêtre</button>
+      <button class="add-fen-btn" style="flex:0 0 auto;padding:11px 14px;color:var(--danger);border-color:rgba(248,113,113,0.3)" onclick="resetFen()">↺ Réinitialiser</button>
+    </div>
+  </div>
+
+  <div class="cadrage-result" id="cadrage-result">
+    <div class="cadrage-big" id="cadrage-nb">—</div>
+    <div class="cadrage-sub">barres de 14' (168") nécessaires</div>
+    <div class="cadrage-detail" id="cadrage-detail"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ ONGLET RÉFÉRENCE ═══════════════ -->
+<div class="panel" id="tab-table">
+  <div class="table-group">
+    <div class="section-title"><span class="badge b-bois">BOIS</span> Ossature bois</div>
+    <div class="door-row" onclick="useRow(3.5,0.5,0.5)">
+      <div class="door-info"><div class="door-name">2×4 + ½" gypse × 2</div><div class="door-comp">3½" + ½" + ½" = 4½"</div><div class="door-note">Résidentiel courant</div></div>
+      <div class="door-cadre"><div class="cadre-label">Cadre</div><div class="cadre-val">4 5/8"</div></div>
+    </div>
+    <div class="door-row" onclick="useRow(3.5,0.625,0.625)">
+      <div class="door-info"><div class="door-name">2×4 + ⅝" gypse × 2</div><div class="door-comp">3½" + ⅝" + ⅝" = 4¾"</div><div class="door-note">Coupe-feu type X</div></div>
+      <div class="door-cadre"><div class="cadre-label">Cadre</div><div class="cadre-val">4 7/8"</div></div>
+    </div>
+    <div class="door-row" onclick="useRow(3.5,0.625,0.5)">
+      <div class="door-info"><div class="door-name">2×4 + ⅝" + ½" gypse</div><div class="door-comp">3½" + ⅝" + ½" = 4⅝"</div><div class="door-note">Mixte — corridors</div></div>
+      <div class="door-cadre"><div class="cadre-label">Cadre</div><div class="cadre-val">4 3/4"</div></div>
+    </div>
+    <div class="door-row" onclick="useRow(5.5,0.5,0.5)">
+      <div class="door-info"><div class="door-name">2×6 + ½" gypse × 2</div><div class="door-comp">5½" + ½" + ½" = 6½"</div><div class="door-note">Mur porteur / acoustique</div></div>
+      <div class="door-cadre"><div class="cadre-label">Cadre</div><div class="cadre-val">6 5/8"</div></div>
+    </div>
+    <div class="door-row" onclick="useRow(5.5,0.625,0.625)">
+      <div class="door-info"><div class="door-name">2×6 + ⅝" gypse × 2</div><div class="door-comp">5½" + ⅝" + ⅝" = 6¾"</div><div class="door-note">Mur porteur coupe-feu</div></div>
+      <div class="door-cadre"><div class="cadre-label">Cadre</div><div class="cadre-val">6 7/8"</div></div>
+    </div>
+  </div>
+
+  <div class="table-group">
+    <div class="section-title"><span class="badge b-acier">ACIER</span> Ossature acier légère</div>
+    <div class="door-row" onclick="useRow(3.625,0.5,0.5)">
+      <div class="door-info"><div class="door-name">Acier 3⅝" + ½" × 2</div><div class="door-comp">3⅝" + ½" + ½" = 4⅝"</div><div class="door-note">Cloison multifamilial</div></div>
+      <div class="door-cadre"><div class="cadre-label">Cadre</div><div class="cadre-val">4 3/4"</div></div>
+    </div>
+    <div class="door-row" onclick="useRow(3.625,0.625,0.625)">
+      <div class="door-info"><div class="door-name">Acier 3⅝" + ⅝" × 2</div><div class="door-comp">3⅝" + ⅝" + ⅝" = 4⅞"</div><div class="door-note">Coupe-feu — très fréquent</div></div>
+      <div class="door-cadre"><div class="cadre-label">Cadre</div><div class="cadre-val">5"</div></div>
+    </div>
+    <div class="door-row" onclick="useRow(6,0.625,0.625)">
+      <div class="door-info"><div class="door-name">Acier 6" + ⅝" × 2</div><div class="door-comp">6" + ⅝" + ⅝" = 7¼"</div><div class="door-note">Séparation de logements</div></div>
+      <div class="door-cadre"><div class="cadre-label">Cadre</div><div class="cadre-val">7 3/8"</div></div>
+    </div>
+  </div>
+
+  <div class="table-group">
+    <div class="section-title"><span class="badge b-beton">BÉTON</span> Bloc et béton</div>
+    <div class="door-row" onclick="useRow(8,0.5,0.5)">
+      <div class="door-info"><div class="door-name">Bloc 8" + ½" gypse × 2</div><div class="door-comp">8" + ½" + ½" = 9"</div><div class="door-note">Sous-sol, commercial</div></div>
+      <div class="door-cadre"><div class="cadre-label">Cadre</div><div class="cadre-val">9 1/8"</div></div>
+    </div>
+    <div class="door-row" onclick="useRow(8,0.5,0)">
+      <div class="door-info"><div class="door-name">Bloc 8" + ½" gypse (1 côté)</div><div class="door-comp">8" + ½" = 8½"</div><div class="door-note">Mur de périmètre</div></div>
+      <div class="door-cadre"><div class="cadre-label">Cadre</div><div class="cadre-val">8 5/8"</div></div>
+    </div>
+  </div>
+  <p style="font-size:11px;color:var(--muted);text-align:center;padding:6px">Touche une ligne → calcul automatique dans l'onglet Cadres</p>
+</div>
+
+<!-- ═══════════════ ONGLET NOTES ═══════════════ -->
+<div class="panel" id="tab-notes">
+  <div class="note-card">
+    <h3>Comment lire les plans</h3>
+    <p>Cherche la <strong>légende des murs</strong> — tableau avec des lettres (Type A, B, C...) qui décrit la composition de chaque mur. Info disponible dans la légende, les détails de coupe, ou le door schedule.</p>
+  </div>
+  <div class="tip">La porte est presque toujours <strong>1¾"</strong> d'épaisseur. C'est le cadre qui change selon le mur.</div>
+  <div class="note-card">
+    <h3>Gypse ½" vs ⅝"</h3>
+    <p><strong>½" régulier</strong> — salles, chambres courant.</p>
+    <p><strong>⅝" Type X</strong> — coupe-feu obligatoire : corridors, cages d'escalier, séparations entre logements.</p>
+  </div>
+  <div class="note-card">
+    <h3>Le jeu de ⅛" Manoir</h3>
+    <p>Toujours ajouter <strong>⅛" à l'épaisseur totale du mur fini</strong> pour le jeu de pose.</p>
+  </div>
+  <div class="note-card">
+    <h3>Cadrage fenêtres</h3>
+    <p>Barre standard = <strong>14' (168")</strong>. Les chutes sont réutilisées d'une fenêtre à l'autre — toujours entrer toutes les fenêtres ensemble pour un résultat optimal.</p>
+  </div>
+  <div class="offline-badge"><div class="dot"></div>Fonctionne hors ligne</div>
+
+  <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
+    <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;">Installer sur l'écran d'accueil</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500;">Android — Chrome :</p>
+    <p style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;">⋮ (3 points) → <em style="color:var(--text)">Ajouter à l'écran d'accueil</em> → Ajouter</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500;">iPhone — Safari uniquement :</p>
+    <p style="font-size:12px;color:var(--muted);line-height:1.6;">⬆ Partager → <em style="color:var(--text)">Sur l'écran d'accueil</em></p>
+  </div>
+
+</div><!-- fin tab-notes -->
+
+<!-- ═══════════════ PANNEAU mm→po ═══════════════ -->
+<div class="conv-overlay" id="conv-overlay" onclick="toggleConv()"></div>
+<div class="conv-sheet" id="conv-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">
+    ⇄ Convertir mm → pouces
+    <button class="sheet-close" onclick="toggleConv()">✕</button>
+  </div>
+  <div class="field">
+    <label>Mesure en millimètres</label>
+    <input type="number" id="mm-val" placeholder="ex: 864" inputmode="numeric" style="font-size:22px;padding:14px;text-align:center;" oninput="convertMM()">
+  </div>
+  <div class="result-card" id="conv-result" style="margin-top:12px">
+    <div class="result-row">
+      <span class="result-name">Pieds — Pouces</span>
+      <span class="result-big" id="conv-ft" style="font-size:24px">—</span>
+    </div>
+    <div class="result-row">
+      <span class="result-name">Pouces seulement</span>
+      <span class="result-big" id="conv-in" style="font-size:24px;color:var(--accent2)">—</span>
+    </div>
+    <div class="result-detail" id="conv-detail"></div>
+  </div>
+
+  <!-- SÉPARATEUR -->
+  <div style="border-top:1px solid var(--border);margin:18px 0 16px;"></div>
+  <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:16px;">⇅ Pieds-pouces ↔ pouces</div>
+
+  <!-- PIEDS-POUCES → POUCES -->
+  <div style="margin-bottom:20px;">
+    <div class="section-title">Pieds ' + Pouces " → Pouces total</div>
+    <div style="display:flex;gap:8px;margin-bottom:8px;">
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+        <label style="font-size:11px;color:var(--muted);">Pieds</label>
+        <div style="position:relative;">
+          <input type="number" id="ftft" placeholder="0" min="0" inputmode="numeric" style="text-align:center;padding-right:24px;width:100%;" oninput="convertFtIn()">
+          <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--accent);pointer-events:none;">'</span>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+        <label style="font-size:11px;color:var(--muted);">Pouces</label>
+        <div style="position:relative;">
+          <input type="number" id="ftin" placeholder="0" min="0" max="11" inputmode="numeric" style="text-align:center;padding-right:24px;width:100%;" oninput="convertFtIn()">
+          <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--accent);pointer-events:none;">"</span>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:13px;color:var(--muted);">Résultat</span>
+      <span style="font-family:'DM Mono',monospace;font-size:22px;font-weight:600;color:var(--success);" id="res-ftin">—</span>
+    </div>
+  </div>
+
+  <!-- POUCES → PIEDS-POUCES -->
+  <div style="margin-bottom:18px;">
+    <div class="section-title">Pouces total → Pieds ' Pouces "</div>
+    <div style="position:relative;margin-bottom:8px;">
+      <input type="number" id="inonly" placeholder="ex: 34" min="0" inputmode="numeric" style="text-align:center;padding-right:28px;width:100%;" oninput="convertInOnly()">
+      <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--accent);pointer-events:none;">"</span>
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:13px;color:var(--muted);">Résultat</span>
+      <span style="font-family:'DM Mono',monospace;font-size:22px;font-weight:600;color:var(--success);" id="res-inonly">—</span>
+    </div>
+  </div>
+
+  <div style="margin-top:14px">
+    <div class="section-title">Références rapides — portes courantes</div>
+    <div class="conv-grid">
+      <div class="conv-quick"><div class="conv-quick-mm">762 mm</div><div class="conv-quick-val">2' 6" — 30"</div></div>
+      <div class="conv-quick"><div class="conv-quick-mm">813 mm</div><div class="conv-quick-val">2' 8" — 32"</div></div>
+      <div class="conv-quick"><div class="conv-quick-mm">864 mm</div><div class="conv-quick-val">2' 10" — 34"</div></div>
+      <div class="conv-quick"><div class="conv-quick-mm">914 mm</div><div class="conv-quick-val">3' 0" — 36"</div></div>
+      <div class="conv-quick"><div class="conv-quick-mm">1981 mm</div><div class="conv-quick-val">6' 6" — 78"</div></div>
+      <div class="conv-quick"><div class="conv-quick-mm">2032 mm</div><div class="conv-quick-val">6' 8" — 80"</div></div>
+      <div class="conv-quick"><div class="conv-quick-mm">2134 mm</div><div class="conv-quick-val">7' 0" — 84"</div></div>
+      <div class="conv-quick"><div class="conv-quick-mm">2438 mm</div><div class="conv-quick-val">8' 0" — 96"</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── BLOCAGE CARACTÈRES INVALIDES ─────────────────────────
+function blockInvalidChar(e) {
+  const allowed = '0123456789 ./';
+  if (e.ctrlKey || e.metaKey) return true;
+  if (!allowed.includes(e.key)) {
+    e.preventDefault();
+    const el = e.target;
+    el.classList.add('error');
+    setTimeout(() => el.classList.remove('error'), 600);
+    return false;
+  }
+  return true;
+}
+
+// ── SAISIE INTELLIGENTE POUCES ───────────────────────────
+// Règles : "4 5" → "4 5/" auto · "4 5/8" → "4 5/8"" auto
+// Mode décimal : "4.6" → laisse taper → "4.625" → "4.625"" auto
+function smartInchInput(el) {
+  clearCalcResult();
+  if (el._deleting) { el._deleting = false; return; }
+
+  let v = el.value;
+  if (v.endsWith('"')) v = v.slice(0,-1);
+
+  // Mode décimal
+  if (/^\d+\.\d+$/.test(v)) {
+    const dec = v.split('.')[1];
+    const complete = ['5','25','75','125','375','625','875'].includes(dec);
+    if (complete) el.value = v + '"';
+    return;
+  }
+
+  // "4 5" → "4 5/"
+  const spaceNum = v.match(/^(\d+)\s(\d+)$/);
+  if (spaceNum) { el.value = spaceNum[1] + ' ' + spaceNum[2] + '/'; return; }
+
+  // "4 5/8" → "4 5/8""
+  if (/^\d+\s\d+\/\d+$/.test(v)) { el.value = v + '"'; return; }
+
+  // "3/4" → "3/4""
+  if (/^\d+\/\d+$/.test(v)) { el.value = v + '"'; return; }
+}
+
+function smartInchKey(e, el) {
+  el._deleting = (e.key === 'Backspace' || e.key === 'Delete');
+  // Backspace sur le " final : on le retire et on laisse continuer normalement
+  if (e.key === 'Backspace' && el.value.endsWith('"') && el.selectionStart === el.value.length) {
+    e.preventDefault();
+    el.value = el.value.slice(0, -1);
+    clearCalcResult();
+  }
+}
+
+// ── RÉINITIALISER FENÊTRES ───────────────────────────────
+function resetFen() {
+  const list = document.getElementById('fen-list');
+  list.innerHTML = `<div class="fen-row">
+    <div class="fen-input-wrap"><input type="number" placeholder="Larg" min="1" max="999" oninput="calcFen()"><span class="fen-unit">"</span></div>
+    <span class="fen-sep">×</span>
+    <div class="fen-input-wrap"><input type="number" placeholder="Haut" min="1" max="999" oninput="calcFen()"><span class="fen-unit">"</span></div>
+    <button class="fen-del" onclick="delFen(this)">✕</button>
+  </div>`;
+  document.getElementById('cadrage-result').classList.remove('show');
+}
+function toFraction(dec) {
+  const whole = Math.floor(dec);
+  const frac = Math.round((dec - whole) * 8) / 8;
+  const map = {0:'',0.125:'⅛',0.25:'¼',0.375:'⅜',0.5:'½',0.625:'⅝',0.75:'¾',0.875:'⅞'};
+  const f = map[frac] !== undefined ? map[frac] : '';
+  if (whole === 0) return f || '0';
+  return f ? whole + ' ' + f : String(whole);
+}
+
+// Parse "4 5/8"" ou "4.625"" ou "4½"" → décimal
+function parseInch(str) {
+  if (!str) return null;
+  str = str.trim().replace(/["""'']/g,'').replace(/½/g,'1/2').replace(/⅜/g,'3/8').replace(/¼/g,'1/4').replace(/¾/g,'3/4').replace(/⅝/g,'5/8').replace(/⅛/g,'1/8').replace(/⅞/g,'7/8');
+  // décimal direct
+  if (/^\d+(\.\d+)?$/.test(str)) return parseFloat(str);
+  // fraction seule: 3/4
+  if (/^\d+\/\d+$/.test(str)) { const [a,b]=str.split('/'); return a/b; }
+  // entier + fraction: 4 5/8
+  const m = str.match(/^(\d+)\s+(\d+)\/(\d+)$/);
+  if (m) return parseInt(m[1]) + parseInt(m[2])/parseInt(m[3]);
+  return null;
+}
+
+// ── ONGLETS ──────────────────────────────────────────────
+function showTab(name) {
+  const names = ['calc','fen','table','notes'];
+  document.querySelectorAll('.tab').forEach(t => {
+    const n = t.getAttribute('data-tab');
+    if (n) t.classList.toggle('active', n === name);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+// ── INSTALL ──────────────────────────────────────────────
+function toggleInstall() {
+  const steps = document.getElementById('install-steps');
+  const chev = document.getElementById('install-chevron');
+  const open = steps.classList.toggle('open');
+  chev.classList.toggle('open', open);
+}
+
+// ── ONGLET CADRES ────────────────────────────────────────
+function onStructChange() {
+  const v = document.getElementById('struct').value;
+  document.getElementById('custom-field').style.display = v === 'other' ? 'flex' : 'none';
+  clearCalcResult();
+}
+function clearCalcResult() {
+  document.getElementById('result-card').classList.remove('show');
+}
+function setChip(sel, val, el) {
+  document.getElementById(sel).value = String(val);
+  el.closest('.std-chips').querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  clearCalcResult();
+}
+function calculate() {
+  let s;
+  const structVal = document.getElementById('struct').value;
+  if (structVal === 'other') {
+    s = parseInch(document.getElementById('custom-val').value);
+    if (s === null) {
+      document.getElementById('custom-val').classList.add('error');
+      document.getElementById('custom-val').nextElementSibling.nextElementSibling && null;
+      const hint = document.getElementById('custom-field').querySelector('.input-hint');
+      hint.textContent = '⚠ Format invalide — ex: 4 5/8" ou 4.625"';
+      hint.classList.add('err');
+      return;
+    }
+    const hint = document.getElementById('custom-field').querySelector('.input-hint');
+    hint.textContent = 'Formats acceptés : 4" · 4 1/2" · 4.5" · 4½"';
+    hint.classList.remove('err');
+    document.getElementById('custom-val').classList.remove('error');
+  } else {
+    s = parseFloat(structVal);
+  }
+  const g1 = parseFloat(document.getElementById('g1').value);
+  const g2 = parseFloat(document.getElementById('g2').value);
+  const mur = Math.round((s + g1 + g2) * 1000) / 1000;
+  const cadre = Math.round((mur + 0.125) * 1000) / 1000;
+  document.getElementById('res-mur').textContent = toFraction(mur) + '"';
+  document.getElementById('res-cadre').textContent = toFraction(cadre) + '"';
+  document.getElementById('res-detail').textContent = toFraction(s) + '" + ' + toFraction(g1) + '" + ' + toFraction(g2) + '" + ⅛" = ' + toFraction(cadre) + '"';
+  document.getElementById('result-card').classList.add('show');
+}
+function useRow(s, g1, g2) {
+  const structSel = document.getElementById('struct');
+  const map = {'3.5':'3.5','5.5':'5.5','3.625':'3.625','6':'6','8':'8'};
+  const k = String(s);
+  if (map[k]) { structSel.value = k; document.getElementById('custom-field').style.display = 'none'; }
+  else { structSel.value = 'other'; document.getElementById('custom-val').value = toFraction(s); document.getElementById('custom-field').style.display = 'flex'; }
+  document.getElementById('g1').value = String(g1);
+  document.getElementById('g2').value = String(g2);
+  // sync chips
+  ['g1','g2'].forEach(id => {
+    const val = document.getElementById(id).value;
+    document.getElementById(id+'-chips').querySelectorAll('.chip').forEach(c => {
+      c.classList.toggle('sel', c.getAttribute('onclick').includes(val));
+    });
+  });
+  showTab('calc');
+  calculate();
+}
+
+// ── ONGLET FENÊTRES ──────────────────────────────────────
+function addFen() {
+  const list = document.getElementById('fen-list');
+  const row = document.createElement('div');
+  row.className = 'fen-row';
+  row.innerHTML = `<div class="fen-input-wrap"><input type="number" placeholder="Larg" min="1" max="999" oninput="calcFen()"><span class="fen-unit">"</span></div><span class="fen-sep">×</span><div class="fen-input-wrap"><input type="number" placeholder="Haut" min="1" max="999" oninput="calcFen()"><span class="fen-unit">"</span></div><button class="fen-del" onclick="delFen(this)">✕</button>`;
+  list.appendChild(row);
+}
+function delFen(btn) {
+  btn.closest('.fen-row').remove();
+  calcFen();
+}
+function calcFen() {
+  const rows = document.querySelectorAll('#fen-list .fen-row');
+  const BARRE = 168; // 14' en pouces
+  const windows = [];
+  for (const row of rows) {
+    const inputs = row.querySelectorAll('input');
+    const w = parseFloat(inputs[0].value);
+    const h = parseFloat(inputs[1].value);
+    if (w > 0 && h > 0) windows.push([w, h]);
+  }
+  if (windows.length === 0) {
+    document.getElementById('cadrage-result').classList.remove('show');
+    return;
+  }
+
+  // Algorithme: liste de chutes disponibles (triées décroissant)
+  let chutes = []; // pouces restants par barre
+  let totalBarres = 0;
+  let log = [];
+
+  // Toutes les pièces nécessaires
+  const pieces = [];
+  windows.forEach(([w,h], i) => {
+    pieces.push({len:w, fen:i+1, dim:'larg'});
+    pieces.push({len:w, fen:i+1, dim:'larg'});
+    pieces.push({len:h, fen:i+1, dim:'haut'});
+    pieces.push({len:h, fen:i+1, dim:'haut'});
+  });
+
+  // Trier les pièces par longueur décroissante pour optimiser
+  pieces.sort((a,b) => b.len - a.len);
+
+  for (const piece of pieces) {
+    // Chercher la plus petite chute suffisante (first fit decreasing)
+    chutes.sort((a,b) => a-b);
+    let used = false;
+    for (let i = 0; i < chutes.length; i++) {
+      if (chutes[i] >= piece.len) {
+        const reste = chutes[i] - piece.len;
+        log.push(`Fenêtre ${piece.fen} (${piece.dim} ${piece.len}") — chute de ${chutes[i]}" → reste ${reste}"`);
+        chutes[i] = reste;
+        if (reste === 0) chutes.splice(i, 1);
+        used = true;
+        break;
+      }
+    }
+    if (!used) {
+      totalBarres++;
+      const reste = BARRE - piece.len;
+      log.push(`Fenêtre ${piece.fen} (${piece.dim} ${piece.len}") — nouvelle barre #${totalBarres} → reste ${reste}"`);
+      if (reste > 0) chutes.push(reste);
+    }
+  }
+
+  // Afficher
+  document.getElementById('cadrage-nb').textContent = totalBarres;
+  const chutesRestantes = chutes.filter(c => c > 0).sort((a,b) => b-a);
+  let detail = log.join('\n');
+  if (chutesRestantes.length > 0) {
+    const pieds = chutesRestantes.map(c => {
+      const ft = Math.floor(c/12);
+      const po = c % 12;
+      return ft > 0 ? `${ft}' ${po > 0 ? po+'"' : ''}` : `${po}"`;
+    });
+    detail += `\n\nChutes récupérables : ${pieds.join(' · ')}`;
+  }
+  document.getElementById('cadrage-detail').innerHTML = detail.replace(/Fenêtre (\d+)/g, '<span class="hi">Fenêtre $1</span>').replace(/nouvelle barre #(\d+)/g, '<span style="color:var(--accent)">nouvelle barre #$1</span>').replace(/\n/g,'<br>');
+  document.getElementById('cadrage-result').classList.add('show');
+}
+
+// ── PANNEAU mm→po ────────────────────────────────────────
+function convertFtIn() {
+  const ft = parseFloat(document.getElementById('ftft').value) || 0;
+  const inc = parseFloat(document.getElementById('ftin').value) || 0;
+  if (ft === 0 && inc === 0) { document.getElementById('res-ftin').textContent = '—'; return; }
+  const total = (ft * 12) + inc;
+  document.getElementById('res-ftin').textContent = total;
+}
+
+function convertInOnly() {
+  const val = parseFloat(document.getElementById('inonly').value);
+  if (!val || val <= 0) { document.getElementById('res-inonly').textContent = '—'; return; }
+  const ft = Math.floor(val / 12);
+  const inc = val % 12;
+  document.getElementById('res-inonly').textContent = ft + "' " + inc + '"';
+}
+
+function toggleConv() {
+  const overlay = document.getElementById('conv-overlay');
+  const sheet = document.getElementById('conv-sheet');
+  const open = overlay.classList.toggle('open');
+  sheet.classList.toggle('open', open);
+  if (open) setTimeout(() => document.getElementById('mm-val').focus(), 350);
+  else { document.getElementById('conv-result').classList.remove('show'); document.getElementById('mm-val').value = ''; }
+}
+function convertMM() {
+  const mm = parseFloat(document.getElementById('mm-val').value);
+  if (!mm || mm <= 0) { document.getElementById('conv-result').classList.remove('show'); return; }
+  const totalIn = Math.round(mm / 25.4);
+  const feet = Math.floor(totalIn / 12);
+  const inches = totalIn % 12;
+  const exact = (mm / 25.4).toFixed(3);
+  document.getElementById('conv-ft').textContent = feet + "' " + inches + '"';
+  document.getElementById('conv-in').textContent = totalIn + '"';
+  document.getElementById('conv-detail').textContent = mm + ' mm ÷ 25.4 = ' + exact + '" → arrondi à ' + totalIn + '"';
+  document.getElementById('conv-result').classList.add('show');
+}
+</script>
+</body>
+</html>
